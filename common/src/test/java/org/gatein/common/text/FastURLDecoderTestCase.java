@@ -165,7 +165,7 @@ public class FastURLDecoderTestCase extends TestCase
       catch (EncodingException e)
       {
       }
-      
+
       //This is % encoding with UTF-8
       String result = utf8Instance.encode("%00%25");
       assertNotNull(result);
@@ -263,5 +263,18 @@ public class FastURLDecoderTestCase extends TestCase
          encoder.encode("\u0100", tmp);
          assertEquals("\u0100", tmp.asString());
       }
+   }
+
+   public void testEncodeSurrogatePair() throws Exception
+   {
+      FastURLDecoder encoder = FastURLDecoder.getUTF8Instance();
+      CharBuffer out = new CharBuffer();
+      StringBuilder sb = new StringBuilder( 2 );
+      sb.append( ( char ) 0xD840 );
+      sb.append( ( char ) 0xDC0B );
+      String hanU2000B = sb.toString(); // U+2000B
+      String encodedWithURLEncoder = URLEncoder.encode(hanU2000B, "UTF8");
+      encoder.encode(hanU2000B, out);
+      assertEquals(encodedWithURLEncoder, out.asString());
    }
 }
